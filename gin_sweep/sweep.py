@@ -1,8 +1,9 @@
-from typing import List, Iterator
+from typing import List, Iterator, Tuple
 
 import argparse
 import itertools
 import yaml
+from sanitize_filename import sanitize
 
 
 def config_overrides_from_yaml(yaml_sweep: dict) -> List[dict]:
@@ -40,13 +41,20 @@ def override_gin(base_ginfile: str, params_to_override: dict) -> str:
 
 
 def gin_configs_from_yaml(base_ginfile: str, yaml_sweep: dict,
-                          max_param_combinations: int) -> Iterator[str]:
+                          max_param_combinations: int) -> \
+        Iterator[Tuple[dict, str]]:
     param_combinations = config_overrides_from_yaml(yaml_sweep)
     assert len(param_combinations) <= max_param_combinations, ValueError(
         f'Too many ginfile combinations, {len(param_combinations)}')
 
-    return map(lambda params: override_gin(base_ginfile, params),
-               param_combinations)
+    return zip(param_combinations,
+               map(lambda params: override_gin(base_ginfile, params),
+                   param_combinations))
+
+
+def exp_name_from_params(params: dict):
+    return sanitize(
+        '_'.join(f'{key[:10]}_{repr(val)}' for key, val in params.items()))
 
 
 if __name__ == '__main__':
@@ -65,6 +73,9 @@ if __name__ == '__main__':
         sweep = yaml.load(yaml_config, Loader=yaml.FullLoader)
         gin = gin_config_file.read()
 
-        for i, cfg in enumerate(gin_configs_from_yaml(gin, sweep, args.max_n)):
+        for i, (_, cfg) in enumerate(
+                gin_configs_from_yaml(gin, sweep, args.max_n)):
             with open(f'ginfile_{i}.gin', 'w+') as f:
+                # TODO: gins named after experiment names?
+                print(exp_name_from_params(_))
                 f.write(cfg)

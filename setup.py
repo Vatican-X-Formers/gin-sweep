@@ -11,6 +11,7 @@ setup(
     description='Creating gin configs out of .yaml sweep files',
     python_requires='>=3.6',
     install_requires=[
-        'pyyaml'
+        'pyyaml',
+        'sanitize-filename'
     ]
 )

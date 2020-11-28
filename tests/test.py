@@ -18,7 +18,7 @@ class MyTestCase(unittest.TestCase):
             sweep = yaml.load(yaml_config, Loader=yaml.FullLoader)
             gin = gin_config_file.read()
 
-        for cfg in gin_configs_from_yaml(gin, sweep, 30):
+        for params, cfg in gin_configs_from_yaml(gin, sweep, 30):
             self.assertGreater(len(cfg), 0, 'gin should not be empty')
 
 
