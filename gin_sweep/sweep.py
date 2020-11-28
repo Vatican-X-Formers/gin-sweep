@@ -1,3 +1,4 @@
+from collections import Iterable
 from typing import List, Iterator, Tuple
 
 import argparse
@@ -53,8 +54,20 @@ def gin_configs_from_yaml(base_ginfile: str, yaml_sweep: dict,
 
 
 def exp_name_from_params(params: dict):
+    def shortened_param_name(param_name):
+        return param_name.split('.')[-1]
+
+    def sanitize_val(val):
+        if isinstance(val, str):
+            return '_' + val
+        elif isinstance(val, Iterable):
+            return '__'.join(sanitize_val(x) for x in val)
+        return '_' + repr(val)
+
     return sanitize_filename(
-        '_'.join(f'{key[:10]}_{repr(val)}' for key, val in params.items()))
+        '_'.join(
+            f'{shortened_param_name(key)}_{sanitize_val(val)}' for key, val in
+            params.items()))
 
 
 if __name__ == '__main__':
