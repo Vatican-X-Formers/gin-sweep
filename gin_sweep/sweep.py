@@ -3,7 +3,7 @@ from typing import List, Iterator, Tuple
 import argparse
 import itertools
 import yaml
-from sanitize_filename import sanitize
+from pathvalidate import sanitize_filename
 
 
 def config_overrides_from_yaml(yaml_sweep: dict) -> List[dict]:
@@ -53,7 +53,7 @@ def gin_configs_from_yaml(base_ginfile: str, yaml_sweep: dict,
 
 
 def exp_name_from_params(params: dict):
-    return sanitize(
+    return sanitize_filename(
         '_'.join(f'{key[:10]}_{repr(val)}' for key, val in params.items()))
 
 
