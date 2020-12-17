@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
         for i, (_, cfg) in enumerate(
                 gin_configs_from_yaml(gin, sweep, args.max_n)):
-            with open(f'ginfile_{i}.gin', 'w+') as f:
-                # TODO: gins named after experiment names?
-                print(exp_name_from_params(_))
+            name = exp_name_from_params(_)
+            with open(f'{name}.gin', 'w+') as f:
+                print(name)
                 f.write(cfg)
