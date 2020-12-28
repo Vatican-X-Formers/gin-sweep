@@ -11,6 +11,7 @@ setup(
     description='Creating gin configs out of .yaml sweep files',
     python_requires='>=3.6',
     install_requires=[
+        'gin-config >= 0.4.0'
         'pyyaml>=5.3.1',
         'pathvalidate'
     ]
