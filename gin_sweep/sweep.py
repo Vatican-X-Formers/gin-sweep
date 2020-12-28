@@ -3,13 +3,14 @@ from typing import List, Iterator, Tuple
 
 import argparse
 import itertools
+
 import yaml
 from pathvalidate import sanitize_filename
 
 
-def config_overrides_from_yaml(yaml_sweep: dict) -> List[dict]:
-    keys = yaml_sweep.keys()
-    vals = yaml_sweep.values()
+def config_overrides_from_sweep(sweep_dict: dict) -> List[dict]:
+    keys = sweep_dict.keys()
+    vals = sweep_dict.values()
     return [dict(zip(keys, instance)) for instance in itertools.product(*vals)]
 
 
@@ -44,7 +45,7 @@ def override_gin(base_ginfile: str, params_to_override: dict) -> str:
 def gin_configs_from_yaml(base_ginfile: str, yaml_sweep: dict,
                           max_param_combinations: int) -> \
         Iterator[Tuple[dict, str]]:
-    param_combinations = config_overrides_from_yaml(yaml_sweep)
+    param_combinations = config_overrides_from_sweep(yaml_sweep)
     assert len(param_combinations) <= max_param_combinations, ValueError(
         f'Too many ginfile combinations, {len(param_combinations)}')
 
@@ -54,6 +55,9 @@ def gin_configs_from_yaml(base_ginfile: str, yaml_sweep: dict,
 
 
 def exp_name_from_params(params: dict):
+    if not params:
+        return 'default'
+
     def shortened_param_name(param_name):
         return param_name.split('.')[-1]
 
