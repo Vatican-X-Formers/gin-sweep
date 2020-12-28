@@ -1,10 +1,10 @@
 import os
 import shutil
 from pathlib import Path
-from typing import Generator
+from typing import Iterator
 
-import trax
 import gin
+import trax
 
 from gin_sweep import exp_name_from_params
 from gin_sweep.sweep import config_overrides_from_sweep
@@ -45,7 +45,7 @@ class ExperimentConfig:
         self.sweep = sweep
 
     def generate_experiment_instances(self) -> \
-            Generator[ExperimentInstanceConfig]:
+            Iterator[ExperimentInstanceConfig]:
         overrides = config_overrides_from_sweep(self.sweep)
         return (
             ExperimentInstanceConfig(

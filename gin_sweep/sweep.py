@@ -42,8 +42,6 @@ def override_gin(base_ginfile: str, params_to_override: dict) -> str:
     return str(gin_wrapper)
 
 
-
-
 def gin_configs_from_yaml(base_ginfile: str, yaml_sweep: dict,
                           max_param_combinations: int) -> \
         Iterator[Tuple[dict, str]]:
