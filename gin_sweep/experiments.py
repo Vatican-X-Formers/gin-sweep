@@ -65,7 +65,8 @@ class ExperimentSaver:
             "Saved models destination is not a directory"
 
     def clear_train_dir(self):
-        shutil.rmtree(self.output_dir)
+        if os.path.isdir(self.output_dir):
+            shutil.rmtree(self.output_dir)
         os.makedirs(self.output_dir)
 
     def save_as(self, cfg: ExperimentConfig,
