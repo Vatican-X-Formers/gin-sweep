@@ -96,18 +96,15 @@ class ExperimentRun:
                      model=None):
         self.saver.clear_train_dir()
 
-        self._train(instance_cfg, model)
+        self._train(instance_cfg, model=model)
 
         if save:
             self.saver.save_as(self.cfg, instance_cfg)
 
     def _train(self, instance_cfg: ExperimentInstanceConfig,
-               verbose=True, model: str = None):
+               model: str = None):
         with gin.unlock_config():
             gin.parse_config(self.base_gin)
-
-            if verbose:
-                print(self.base_gin)
 
             for k, v in instance_cfg.sweep_override.items():
                 gin.bind_parameter(k, v)
