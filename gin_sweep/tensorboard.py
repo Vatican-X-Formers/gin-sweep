@@ -4,7 +4,11 @@ import re
 import shutil
 import tarfile
 import tempfile
-import time
+import datetime
+
+
+def get_current_timestamp() -> str:
+    return datetime.datetime.now().strftime("%Y_%m_%dT%H_%M_%S_%f")
 
 
 def package_tfevents(models_dir, save_dir='', regex=None, dry_run=False):
@@ -30,7 +34,7 @@ def package_tfevents(models_dir, save_dir='', regex=None, dry_run=False):
             else:
                 print(exp_dir, path)
 
-        timestamp = int(time.time())
+        timestamp = get_current_timestamp()
         archive_name = f'{save_dir}/tensorboards_{timestamp}.tar.gz'
 
         if not dry_run:
