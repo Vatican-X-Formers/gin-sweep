@@ -69,6 +69,10 @@ class ExperimentSaver:
             shutil.rmtree(self.output_dir)
         os.makedirs(self.output_dir)
 
+    def load_checkpoint_from_path(self, ckpt_path: str):
+        os.makedirs(self.output_dir, exist_ok=True)
+        shutil.copy(ckpt_path, self.output_dir)
+
     def save_as(self, cfg: ExperimentConfig,
                 instance_cfg: ExperimentInstanceConfig):
         exp_name = str(instance_cfg)
@@ -83,10 +87,13 @@ class ExperimentSaver:
 
 class ExperimentRun:
     def __init__(self, cfg: ExperimentConfig,
-                 saver: ExperimentSaver):
+                 saver: ExperimentSaver, checkpoint_path: str = None):
         self.cfg = cfg
         self.saver = saver
         self.base_gin = load_base_gin(self.cfg.base_gin_path)
+        if checkpoint_path is not None:
+            assert checkpoint_path.endswith(".pkl.gz")
+        self.ckpt_path = checkpoint_path
 
     def run(self, save=True, model=None):
         for instance_cfg in self.cfg.generate_experiment_instances():
@@ -95,6 +102,9 @@ class ExperimentRun:
     def run_instance(self, instance_cfg: ExperimentInstanceConfig, save: bool,
                      model=None):
         self.saver.clear_train_dir()
+
+        if self.ckpt_path is not None:
+            self.saver.load_checkpoint_from_path(self.ckpt_path)
 
         self._train(instance_cfg, model=model)
 
