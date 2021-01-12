@@ -97,20 +97,28 @@ class ExperimentRun:
 
     def run(self, save=True, model=None):
         for instance_cfg in self.cfg.generate_experiment_instances():
-            self.run_instance(instance_cfg, save, model)
+            self.run_instance(instance_cfg, save, model, self.ckpt_path)
 
-    def eval(self, n_steps) -> trax.supervised.training.Loop:
+    def eval(self, n_steps,
+             load_checkpoint=False) -> trax.supervised.training.Loop:
+        ckpt_path = self.ckpt_path if load_checkpoint else None
+
         eval_cfg = ExperimentInstanceConfig(self.cfg.base_gin_path, {})
-        train = self.run_instance(eval_cfg, save=False)
+        train = self.run_instance(eval_cfg, save=False,
+                                  checkpoint_path=ckpt_path,
+                                  clear_train_dir=False)
+
         train._eval_tasks[0]._n_eval_batches = n_steps
         return train.run_evals()
 
     def run_instance(self, instance_cfg: ExperimentInstanceConfig, save: bool,
-                     model=None):
-        self.saver.clear_train_dir()
+                     model=None, checkpoint_path: str = None,
+                     clear_train_dir=True):
+        if clear_train_dir:
+            self.saver.clear_train_dir()
 
-        if self.ckpt_path is not None:
-            self.saver.load_checkpoint_from_path(self.ckpt_path)
+        if checkpoint_path is not None:
+            self.saver.load_checkpoint_from_path(checkpoint_path)
 
         train = self._train(instance_cfg, model=model)
 
