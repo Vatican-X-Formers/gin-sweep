@@ -95,9 +95,10 @@ class ExperimentRun:
             assert checkpoint_path.endswith(".pkl.gz")
         self.ckpt_path = checkpoint_path
 
-    def run(self, save=True, model=None):
+    def run(self, save=True, model=None, clear_train_dir=True):
         for instance_cfg in self.cfg.generate_experiment_instances():
-            self.run_instance(instance_cfg, save, model, self.ckpt_path)
+            self.run_instance(instance_cfg, save, model, self.ckpt_path,
+                              clear_train_dir)
 
     def eval(self, n_steps, sweep,
              load_checkpoint=False) -> trax.supervised.training.Loop:
