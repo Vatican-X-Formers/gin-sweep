@@ -99,11 +99,11 @@ class ExperimentRun:
         for instance_cfg in self.cfg.generate_experiment_instances():
             self.run_instance(instance_cfg, save, model, self.ckpt_path)
 
-    def eval(self, n_steps,
+    def eval(self, n_steps, sweep,
              load_checkpoint=False) -> trax.supervised.training.Loop:
         ckpt_path = self.ckpt_path if load_checkpoint else None
 
-        eval_cfg = ExperimentInstanceConfig(self.cfg.base_gin_path, {})
+        eval_cfg = ExperimentInstanceConfig(self.cfg.base_gin_path, sweep)
         train = self.run_instance(eval_cfg, save=False,
                                   checkpoint_path=ckpt_path,
                                   clear_train_dir=False)
