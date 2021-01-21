@@ -20,6 +20,7 @@ if __name__ == '__main__':
     gin.bind_parameter('batcher.eval_batch_size', args.eval_bs)
     gin.bind_parameter('train.eval_steps', args.eval_steps)
     gin.bind_parameter('train.eval_frequency', 1)
+    gin.bind_parameter('data_streams.shuffle_on_eval', False)
 
     gin.bind_parameter('train.optimizer',
                        gin.config.ConfigurableReference('trax.optimizers.SGD',
