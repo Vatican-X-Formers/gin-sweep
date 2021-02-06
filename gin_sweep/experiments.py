@@ -130,7 +130,7 @@ class ExperimentRun:
         return train
 
     def _train(self, instance_cfg: ExperimentInstanceConfig,
-               model: str = None, logging: str = 'info'):
+               model: str = None, logging_verbosity: str = 'info'):
         with gin.unlock_config():
             gin.parse_config(self.base_gin)
 
@@ -141,7 +141,7 @@ class ExperimentRun:
                 gin.parse_config(f"train.model = @trax.models.{model}")
 
             print(gin.config_str())
-            logging.set_verbosity(logging)
+            logging.set_verbosity(logging_verbosity)
             train = trax.supervised.train(output_dir=self.saver.output_dir)
 
             return train
