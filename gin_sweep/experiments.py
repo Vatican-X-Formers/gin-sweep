@@ -5,6 +5,8 @@ from typing import Iterator
 
 import gin
 import trax
+from trax.trainer import _tf_setup_from_flags, _jax_and_tf_configure_for_devices, FLAGS
+from absl import logging
 
 from gin_sweep import exp_name_from_params
 from gin_sweep.sweep import config_overrides_from_sweep
@@ -140,5 +142,14 @@ class ExperimentRun:
                 gin.parse_config(f"train.model = @trax.models.{model}")
 
             print(gin.config_str())
+            self._setup_training()
             train = trax.supervised.train(output_dir=self.saver.output_dir)
+
             return train
+
+    def _setup_training(self):
+        logging.set_verbosity(FLAGS.log_level)
+        _tf_setup_from_flags()
+        _jax_and_tf_configure_for_devices()
+
+
