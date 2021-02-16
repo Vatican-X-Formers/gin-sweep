@@ -135,7 +135,11 @@ class ExperimentRun:
             gin.parse_config(self.base_gin)
 
             for k, v in instance_cfg.sweep_override.items():
-                gin.bind_parameter(k, v)
+                if type(v) == str and v.startswith('@'):
+                    ref = gin.config.ConfigurableReference(v[1:], False)
+                    gin.bind_parameter(k, ref)
+                else:
+                    gin.bind_parameter(k, v)
 
             if model is not None:
                 gin.parse_config(f"train.model = @trax.models.{model}")
