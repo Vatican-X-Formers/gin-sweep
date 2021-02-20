@@ -132,6 +132,7 @@ class ExperimentRun:
     def _train(self, instance_cfg: ExperimentInstanceConfig,
                model: str = None, logging_verbosity: str = 'info'):
         with gin.unlock_config():
+            gin.clear_config(clear_constants=True)
             gin.parse_config(self.base_gin)
 
             for k, v in instance_cfg.sweep_override.items():
