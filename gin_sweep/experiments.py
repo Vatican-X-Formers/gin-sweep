@@ -14,7 +14,7 @@ gin.finalize()  # Do not allow unexpected ginfile changes
 
 
 def load_base_gin(gin_repo_path,
-                  configs_root='/content/vatican-gins/configs/') -> str:
+                  configs_root) -> str:
     with open(configs_root + gin_repo_path) as f:
         base_ginfile = f.read()
     return base_ginfile
@@ -88,10 +88,11 @@ class ExperimentSaver:
 
 class ExperimentRun:
     def __init__(self, cfg: ExperimentConfig,
-                 saver: ExperimentSaver, checkpoint_path: str = None):
+                 saver: ExperimentSaver, checkpoint_path: str = None,
+                 configs_root='/content/vatican-gins/configs/'):
         self.cfg = cfg
         self.saver = saver
-        self.base_gin = load_base_gin(self.cfg.base_gin_path)
+        self.base_gin = load_base_gin(self.cfg.base_gin_path, configs_root)
         if checkpoint_path is not None:
             assert checkpoint_path.endswith(".pkl.gz")
         self.ckpt_path = checkpoint_path
