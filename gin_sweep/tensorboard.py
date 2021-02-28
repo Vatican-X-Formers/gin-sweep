@@ -41,3 +41,5 @@ def package_tfevents(models_dir, save_dir='', regex=None, dry_run=False):
             with tarfile.open(archive_name, "w:gz") as tar:
                 tar.add(tmp_boards_dir,
                         arcname='')
+
+        return archive_name
