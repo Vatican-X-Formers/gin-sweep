@@ -97,19 +97,23 @@ class ExperimentRun:
         self.ckpt_path = checkpoint_path
 
     def run(self, save=True, model=None, clear_train_dir=True):
-        for instance_cfg in self.cfg.generate_experiment_instances():
-            self.run_instance(instance_cfg, save, model, self.ckpt_path,
-                              clear_train_dir)
+        return [self.run_instance(instance_cfg, save, model, self.ckpt_path,
+                                  clear_train_dir)
+                for instance_cfg in self.cfg.generate_experiment_instances()]
 
-    def eval(self, n_steps, sweep,
+    def eval(self, n_steps, sweep, gin_path_override=None,
              load_checkpoint=False) -> trax.supervised.training.Loop:
         ckpt_path = self.ckpt_path if load_checkpoint else None
+        gin_path = gin_path_override or self.cfg.base_gin_path
 
-        eval_cfg = ExperimentInstanceConfig(self.cfg.base_gin_path, sweep)
+        eval_cfg = ExperimentInstanceConfig(gin_path, sweep)
         train = self.run_instance(eval_cfg, save=False,
                                   checkpoint_path=ckpt_path,
                                   clear_train_dir=False)
 
+        return self.run_eval_from_train(train, n_steps)
+
+    def run_eval_from_train(self, train, n_steps):
         train._eval_tasks[0]._n_eval_batches = n_steps
         return train.run_evals()
 
@@ -150,6 +154,3 @@ class ExperimentRun:
             train = trax.supervised.train(output_dir=self.saver.output_dir)
 
             return train
-
-
-
