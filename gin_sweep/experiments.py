@@ -71,8 +71,7 @@ class ExperimentSaver:
         os.makedirs(self.output_dir)
 
     def load_checkpoint_from_path(self, ckpt_path: str):
-        os.makedirs(self.output_dir, exist_ok=True)
-        shutil.copy(ckpt_path, self.output_dir)
+        shutil.copytree(ckpt_path, self.output_dir)
 
     def save_as(self, cfg: ExperimentConfig,
                 instance_cfg: ExperimentInstanceConfig):
@@ -93,8 +92,6 @@ class ExperimentRun:
         self.cfg = cfg
         self.saver = saver
         self.base_gin = load_base_gin(self.cfg.base_gin_path, configs_root)
-        if checkpoint_path is not None:
-            assert checkpoint_path.endswith(".pkl.gz")
         self.ckpt_path = checkpoint_path
 
     def run(self, save=True, model=None, clear_train_dir=True):
