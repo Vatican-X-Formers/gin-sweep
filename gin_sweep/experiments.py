@@ -71,7 +71,9 @@ class ExperimentSaver:
         os.makedirs(self.output_dir)
 
     def load_checkpoint_from_path(self, ckpt_path: str):
-        shutil.copytree(ckpt_path, self.output_dir, dirs_exist_ok=True)
+        if os.path.isdir(self.output_dir):
+            shutil.rmtree(self.output_dir)
+        shutil.copytree(ckpt_path, self.output_dir)
 
     def save_as(self, cfg: ExperimentConfig,
                 instance_cfg: ExperimentInstanceConfig):
